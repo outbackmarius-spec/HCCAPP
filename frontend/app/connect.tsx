@@ -16,6 +16,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 
+import { Linking } from 'react-native';
+
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 const COLORS = {
@@ -230,7 +232,7 @@ export default function ConnectScreen() {
           </View>
           <View style={styles.contactItem}>
             <Ionicons name="mail" size={20} color={COLORS.primary} />
-            <Text style={styles.contactText}>info@highfieldschurch.org</Text>
+            <Text style={styles.contactText}>info@highfieldscommunitychurch.com.au</Text>
           </View>
           <View style={styles.contactItem}>
             <Ionicons name="time" size={20} color={COLORS.primary} />
@@ -242,16 +244,22 @@ export default function ConnectScreen() {
         <View style={styles.socialSection}>
           <Text style={styles.socialTitle}>Follow Us</Text>
           <View style={styles.socialButtons}>
-            <TouchableOpacity style={styles.socialButton}>
+            <TouchableOpacity 
+              style={styles.socialButton}
+              onPress={() => Linking.openURL('https://www.facebook.com/highfieldscommunitychurch')}
+            >
               <Ionicons name="logo-facebook" size={24} color={COLORS.text} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Ionicons name="logo-instagram" size={24} color={COLORS.text} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
+            <TouchableOpacity 
+              style={styles.socialButton}
+              onPress={() => Linking.openURL('https://www.youtube.com/@highfieldscommunitychurch3628')}
+            >
               <Ionicons name="logo-youtube" size={24} color={COLORS.text} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
+            <TouchableOpacity 
+              style={styles.socialButton}
+              onPress={() => Linking.openURL('https://www.highfieldscommunitychurch.com.au')}
+            >
               <Ionicons name="globe" size={24} color={COLORS.text} />
             </TouchableOpacity>
           </View>
