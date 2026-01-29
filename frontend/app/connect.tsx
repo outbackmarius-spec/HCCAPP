@@ -201,22 +201,22 @@ export default function ConnectScreen() {
         {/* Donate Card */}
         <TouchableOpacity
           style={styles.connectCard}
-          onPress={() => setShowDonateModal(true)}
+          onPress={() => Linking.openURL('https://tithe.ly/give_new/www/#/tithely/give-one-time/1303414')}
         >
           <View style={[styles.cardIcon, { backgroundColor: '#4CAF5022' }]}>
             <Ionicons name="gift" size={32} color="#4CAF50" />
           </View>
           <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>Give</Text>
+            <Text style={styles.cardTitle}>Give Online</Text>
             <Text style={styles.cardDescription}>
               Support our mission and help us spread the message of hope and love.
             </Text>
             <View style={styles.cardTags}>
-              <Text style={styles.cardTag}>One-time</Text>
-              <Text style={styles.cardTag}>Recurring</Text>
+              <Text style={styles.cardTag}>Tithe.ly</Text>
+              <Text style={styles.cardTag}>Secure</Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={24} color={COLORS.textSecondary} />
+          <Ionicons name="open-outline" size={24} color={COLORS.primary} />
         </TouchableOpacity>
 
         {/* Contact Info */}
