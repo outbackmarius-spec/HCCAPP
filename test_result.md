@@ -101,3 +101,204 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: Build a Church App for Highfields Community Church (HCC) with check-in, prayer requests, questions, volunteer signup, donations, life group studies, and recent sermons features.
+
+backend:
+  - task: "Check-in API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "POST /api/checkins and GET /api/checkins working - tested with curl"
+
+  - task: "Prayer Request API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "POST /api/prayer-requests working"
+
+  - task: "Questions API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "POST /api/questions working"
+
+  - task: "Volunteer API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "POST /api/volunteers working"
+
+  - task: "Donations API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "POST /api/donations working - collects donation intent"
+
+  - task: "Life Groups API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "GET /api/life-groups and POST /api/life-groups/signup working - tested with curl"
+
+  - task: "Sermons API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "GET /api/sermons working - returns seeded sermon data with RISE series"
+
+frontend:
+  - task: "Home Screen with Check-in"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Home screen displays HCC logo, check-in card, welcome message, prayer/question quick actions"
+
+  - task: "Check-in Modal"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Modal opens with name, phone, first-time visitor checkbox - submits to API"
+
+  - task: "Prayer Request Modal"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Anonymous option and prayer request submission working"
+
+  - task: "Questions Modal"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/index.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Question submission with anonymous option working"
+
+  - task: "Sermons Screen"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/sermons.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Lists sermons with series filter (RISE, Connected, Amazing Grace), clickable for YouTube"
+
+  - task: "Life Groups Screen"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/lifegroups.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Shows life groups with Join Group button and signup modal"
+
+  - task: "Connect Screen (Volunteer/Donate)"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/connect.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Volunteer signup and Donation intent forms working, contact info displayed"
+
+  - task: "Tab Navigation"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/_layout.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "4-tab navigation: Home, Sermons, Life Groups, Connect - all working"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "All features implemented and visually verified"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+    - message: "MVP complete with all requested features: check-in, prayer requests, questions, volunteer, donate, life groups, sermons. UI follows HCC branding with cyan/teal primary color."
