@@ -222,7 +222,7 @@ export default function ConnectScreen() {
           <Text style={styles.contactTitle}>Contact Us</Text>
           <View style={styles.contactItem}>
             <Ionicons name="location" size={20} color={COLORS.primary} />
-            <Text style={styles.contactText}>123 Church Street, Highfields</Text>
+            <Text style={styles.contactText}>55 Highfields Rd, Highfields, QLD 4352</Text>
           </View>
           <View style={styles.contactItem}>
             <Ionicons name="call" size={20} color={COLORS.primary} />
