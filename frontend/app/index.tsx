@@ -214,25 +214,85 @@ export default function HomeScreen() {
 
         {/* This Week */}
         <View style={styles.thisWeekCard}>
-          <Text style={styles.thisWeekTitle}>This Week at HCC</Text>
+          <Text style={styles.thisWeekTitle}>Weekly at HCC</Text>
           <View style={styles.eventItem}>
             <View style={styles.eventDate}>
               <Text style={styles.eventDay}>SUN</Text>
-              <Text style={styles.eventDateNum}>13</Text>
+              <Ionicons name="people" size={18} color={COLORS.text} />
             </View>
             <View style={styles.eventInfo}>
               <Text style={styles.eventName}>Sunday Service</Text>
-              <Text style={styles.eventTime}>9:00 AM & 11:00 AM</Text>
+              <Text style={styles.eventTime}>9:00 AM</Text>
             </View>
           </View>
           <View style={styles.eventItem}>
             <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>WED</Text>
-              <Text style={styles.eventDateNum}>16</Text>
+              <Text style={styles.eventDay}>MON</Text>
+              <Ionicons name="cafe" size={18} color={COLORS.text} />
             </View>
             <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>Midweek Service</Text>
-              <Text style={styles.eventTime}>7:00 PM</Text>
+              <Text style={styles.eventName}>Men's Coffee at Kerb Cafe</Text>
+              <Text style={styles.eventTime}>8:00 AM</Text>
+            </View>
+          </View>
+          <View style={styles.eventItem}>
+            <View style={styles.eventDate}>
+              <Text style={styles.eventDay}>MON</Text>
+              <Ionicons name="musical-notes" size={18} color={COLORS.text} />
+            </View>
+            <View style={styles.eventInfo}>
+              <Text style={styles.eventName}>HUB Singers Practice</Text>
+              <Text style={styles.eventTime}>5:30 PM</Text>
+            </View>
+          </View>
+          <View style={styles.eventItem}>
+            <View style={styles.eventDate}>
+              <Text style={styles.eventDay}>TUE</Text>
+              <Ionicons name="people-circle" size={18} color={COLORS.text} />
+            </View>
+            <View style={styles.eventInfo}>
+              <Text style={styles.eventName}>Young Adults Life Group</Text>
+              <Text style={styles.eventTime}>6:30 PM</Text>
+            </View>
+          </View>
+          <View style={styles.eventItem}>
+            <View style={styles.eventDate}>
+              <Text style={styles.eventDay}>THU</Text>
+              <Ionicons name="book" size={18} color={COLORS.text} />
+            </View>
+            <View style={styles.eventInfo}>
+              <Text style={styles.eventName}>Men's Bible Study</Text>
+              <Text style={styles.eventTime}>8:30 AM</Text>
+            </View>
+          </View>
+          <View style={styles.eventItem}>
+            <View style={styles.eventDate}>
+              <Text style={styles.eventDay}>THU</Text>
+              <Ionicons name="color-palette" size={18} color={COLORS.text} />
+            </View>
+            <View style={styles.eventInfo}>
+              <Text style={styles.eventName}>Ladies Craft Group</Text>
+              <Text style={styles.eventTime}>10:00 AM</Text>
+            </View>
+          </View>
+          <View style={styles.eventItem}>
+            <View style={styles.eventDate}>
+              <Text style={styles.eventDay}>FRI</Text>
+              <Ionicons name="book" size={18} color={COLORS.text} />
+            </View>
+            <View style={styles.eventInfo}>
+              <Text style={styles.eventName}>Ladies Bible Study</Text>
+              <Text style={styles.eventTime}>9:00 AM</Text>
+            </View>
+          </View>
+          <View style={styles.eventItem}>
+            <View style={styles.eventDate}>
+              <Text style={styles.eventDay}>FRI</Text>
+              <Ionicons name="happy" size={18} color={COLORS.text} />
+            </View>
+            <View style={styles.eventInfo}>
+              <Text style={styles.eventName}>Youth Group</Text>
+              <Text style={styles.eventTime}>6:30 PM - 8:00 PM</Text>
             </View>
           </View>
         </View>

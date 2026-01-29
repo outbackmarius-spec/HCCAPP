@@ -236,7 +236,7 @@ export default function ConnectScreen() {
           </View>
           <View style={styles.contactItem}>
             <Ionicons name="time" size={20} color={COLORS.primary} />
-            <Text style={styles.contactText}>Sunday Services: 9 AM & 11 AM</Text>
+            <Text style={styles.contactText}>Sunday Service: 9:00 AM</Text>
           </View>
         </View>
 
