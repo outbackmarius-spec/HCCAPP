@@ -71,6 +71,12 @@ const MINISTRIES: Ministry[] = [
     description: 'Creating a welcoming environment for all who visit. From greeting at the door to serving coffee, we make everyone feel at home and loved.',
     icon: 'cafe',
   },
+  {
+    id: '5',
+    name: 'Alpha Course Team',
+    description: 'Join our team for Term 2 and help create a welcoming space for people to explore faith and discover Jesus.',
+    icon: 'compass',
+  },
 ];
 
 export default function ResourcesScreen() {
