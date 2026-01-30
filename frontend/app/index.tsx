@@ -141,6 +141,34 @@ export default function HomeScreen() {
     }
   };
 
+  const handleConnect = async () => {
+    if (!connectName.trim() || !connectEmail.trim() || !connectPhone.trim()) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      await axios.post(`${API_URL}/api/life-groups/connect`, {
+        name: connectName,
+        email: connectEmail,
+        phone: connectPhone,
+        interest: connectInterest || 'Life Group',
+      });
+      setShowConnectModal(false);
+      setConnectName('');
+      setConnectEmail('');
+      setConnectPhone('');
+      setConnectInterest('');
+      Alert.alert('Thank You!', 'We received your request to connect! Someone from our team will reach out to you soon.');
+    } catch (error) {
+      console.error('Connect error:', error);
+      Alert.alert('Error', 'Failed to submit. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
