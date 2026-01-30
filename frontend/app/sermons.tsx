@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
-  ActivityIndicator,
   Linking,
-  Image,
+  ScrollView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
-import { format } from 'date-fns';
-
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+import { WebView } from 'react-native-webview';
 
 const COLORS = {
   primary: '#00D4D4',
@@ -25,138 +21,143 @@ const COLORS = {
   textSecondary: '#888888',
 };
 
-interface Sermon {
-  id: string;
-  title: string;
-  description: string;
-  speaker: string;
-  youtube_url: string;
-  thumbnail_url: string;
-  date: string;
-  series?: string;
-}
+const YOUTUBE_CHANNEL_ID = 'UCGKqUGpw1M6kFMKpkfkpCBQ';
+const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@highfieldscommunitychurch3628';
 
 export default function SermonsScreen() {
-  const [sermons, setSermons] = useState<Sermon[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedSeries, setSelectedSeries] = useState<string | null>(null);
+  const [showWebView, setShowWebView] = useState(false);
 
-  useEffect(() => {
-    fetchSermons();
-  }, []);
-
-  const fetchSermons = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/sermons`);
-      setSermons(response.data);
-    } catch (error) {
-      console.error('Error fetching sermons:', error);
-    } finally {
-      setLoading(false);
-    }
+  const openYouTubeChannel = () => {
+    Linking.openURL(YOUTUBE_CHANNEL_URL);
   };
 
-  const openSermon = (url: string) => {
-    Linking.openURL(url);
+  const openYouTubeApp = () => {
+    // Try to open YouTube app first, fall back to browser
+    const youtubeAppUrl = `youtube://www.youtube.com/channel/${YOUTUBE_CHANNEL_ID}`;
+    const youtubeWebUrl = YOUTUBE_CHANNEL_URL;
+    
+    Linking.canOpenURL(youtubeAppUrl)
+      .then((supported) => {
+        if (supported) {
+          return Linking.openURL(youtubeAppUrl);
+        } else {
+          return Linking.openURL(youtubeWebUrl);
+        }
+      })
+      .catch(() => {
+        Linking.openURL(youtubeWebUrl);
+      });
   };
 
-  const series = [...new Set(sermons.map(s => s.series).filter(Boolean))];
-
-  const filteredSermons = selectedSeries
-    ? sermons.filter(s => s.series === selectedSeries)
-    : sermons;
-
-  const renderSermon = ({ item }: { item: Sermon }) => (
-    <TouchableOpacity
-      style={styles.sermonCard}
-      onPress={() => openSermon(item.youtube_url)}
-    >
-      <View style={styles.thumbnailContainer}>
-        <View style={styles.thumbnailPlaceholder}>
-          <Ionicons name="play-circle" size={48} color={COLORS.primary} />
-        </View>
-        <View style={styles.playOverlay}>
-          <Ionicons name="play" size={32} color={COLORS.text} />
-        </View>
-      </View>
-      <View style={styles.sermonInfo}>
-        {item.series && (
-          <Text style={styles.seriesBadge}>{item.series}</Text>
-        )}
-        <Text style={styles.sermonTitle}>{item.title}</Text>
-        <Text style={styles.sermonSpeaker}>{item.speaker}</Text>
-        <Text style={styles.sermonDate}>
-          {format(new Date(item.date), 'MMMM d, yyyy')}
-        </Text>
-        <Text style={styles.sermonDescription} numberOfLines={2}>
-          {item.description}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-
-  if (loading) {
+  if (showWebView && Platform.OS === 'web') {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Loading sermons...</Text>
+        <View style={styles.webViewHeader}>
+          <TouchableOpacity onPress={() => setShowWebView(false)} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
         </View>
+        <WebView
+          source={{ uri: `https://www.youtube.com/embed/videoseries?list=UU${YOUTUBE_CHANNEL_ID.substring(2)}` }}
+          style={styles.webView}
+          allowsFullscreenVideo
+          javaScriptEnabled
+        />
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Recent Sermons</Text>
-        <Text style={styles.headerSubtitle}>Watch and grow in faith</Text>
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Sermons</Text>
+          <Text style={styles.headerSubtitle}>Watch and grow in faith</Text>
+        </View>
 
-      {/* Series Filter */}
-      <View style={styles.filterContainer}>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          data={['All', ...series]}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.filterChip,
-                (item === 'All' ? !selectedSeries : selectedSeries === item) &&
-                  styles.filterChipActive,
-              ]}
-              onPress={() => setSelectedSeries(item === 'All' ? null : item)}
-            >
-              <Text
-                style={[
-                  styles.filterChipText,
-                  (item === 'All' ? !selectedSeries : selectedSeries === item) &&
-                    styles.filterChipTextActive,
-                ]}
-              >
-                {item}
-              </Text>
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={styles.filterList}
-        />
-      </View>
-
-      <FlatList
-        data={filteredSermons}
-        renderItem={renderSermon}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="videocam-off" size={64} color={COLORS.textSecondary} />
-            <Text style={styles.emptyText}>No sermons found</Text>
+        {/* YouTube Channel Card */}
+        <View style={styles.channelCard}>
+          <View style={styles.channelIconContainer}>
+            <Ionicons name="logo-youtube" size={48} color="#FF0000" />
           </View>
-        }
-      />
+          <Text style={styles.channelName}>Highfields Community Church</Text>
+          <Text style={styles.channelDescription}>
+            Watch our latest sermons, worship sessions, and special events on our YouTube channel.
+          </Text>
+          
+          <TouchableOpacity style={styles.watchButton} onPress={openYouTubeApp}>
+            <Ionicons name="play-circle" size={24} color={COLORS.background} />
+            <Text style={styles.watchButtonText}>Watch on YouTube</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Quick Access Section */}
+        <Text style={styles.sectionTitle}>Quick Access</Text>
+        
+        <TouchableOpacity style={styles.linkCard} onPress={openYouTubeChannel}>
+          <View style={styles.linkIconContainer}>
+            <Ionicons name="videocam" size={24} color={COLORS.primary} />
+          </View>
+          <View style={styles.linkContent}>
+            <Text style={styles.linkTitle}>All Videos</Text>
+            <Text style={styles.linkSubtitle}>Browse all our sermon recordings</Text>
+          </View>
+          <Ionicons name="open-outline" size={20} color={COLORS.textSecondary} />
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.linkCard} 
+          onPress={() => Linking.openURL(`${YOUTUBE_CHANNEL_URL}/live`)}
+        >
+          <View style={[styles.linkIconContainer, { backgroundColor: '#FF000022' }]}>
+            <Ionicons name="radio" size={24} color="#FF0000" />
+          </View>
+          <View style={styles.linkContent}>
+            <Text style={styles.linkTitle}>Live Stream</Text>
+            <Text style={styles.linkSubtitle}>Watch our services live on Sundays</Text>
+          </View>
+          <Ionicons name="open-outline" size={20} color={COLORS.textSecondary} />
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.linkCard} 
+          onPress={() => Linking.openURL(`${YOUTUBE_CHANNEL_URL}/playlists`)}
+        >
+          <View style={[styles.linkIconContainer, { backgroundColor: '#7B68EE22' }]}>
+            <Ionicons name="list" size={24} color="#7B68EE" />
+          </View>
+          <View style={styles.linkContent}>
+            <Text style={styles.linkTitle}>Sermon Series</Text>
+            <Text style={styles.linkSubtitle}>Watch complete sermon series</Text>
+          </View>
+          <Ionicons name="open-outline" size={20} color={COLORS.textSecondary} />
+        </TouchableOpacity>
+
+        {/* Subscribe Section */}
+        <View style={styles.subscribeCard}>
+          <Ionicons name="notifications" size={32} color={COLORS.primary} />
+          <Text style={styles.subscribeTitle}>Never Miss a Sermon</Text>
+          <Text style={styles.subscribeText}>
+            Subscribe to our YouTube channel and turn on notifications to get updates when new sermons are uploaded.
+          </Text>
+          <TouchableOpacity 
+            style={styles.subscribeButton} 
+            onPress={() => Linking.openURL(`${YOUTUBE_CHANNEL_URL}?sub_confirmation=1`)}
+          >
+            <Ionicons name="logo-youtube" size={20} color="#FFFFFF" />
+            <Text style={styles.subscribeButtonText}>Subscribe</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Info Card */}
+        <View style={styles.infoCard}>
+          <Ionicons name="information-circle" size={24} color={COLORS.primary} />
+          <Text style={styles.infoText}>
+            Our sermons are uploaded to YouTube after each Sunday service. You can also listen to past sermons on Spotify and Apple Podcasts.
+          </Text>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -165,16 +166,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: COLORS.textSecondary,
   },
   header: {
     paddingHorizontal: 16,
@@ -191,102 +182,157 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     marginTop: 4,
   },
-  filterContainer: {
+  webViewHeader: {
+    padding: 16,
+    backgroundColor: COLORS.surface,
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: COLORS.text,
+    fontSize: 16,
+    marginLeft: 8,
+  },
+  webView: {
+    flex: 1,
+  },
+  channelCard: {
+    backgroundColor: COLORS.surface,
+    marginHorizontal: 16,
+    marginTop: 16,
+    padding: 24,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  channelIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#FF000011',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  channelName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    textAlign: 'center',
     marginBottom: 8,
   },
-  filterList: {
-    paddingHorizontal: 16,
-    gap: 8,
-  },
-  filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: COLORS.surface,
-    marginRight: 8,
-  },
-  filterChipActive: {
-    backgroundColor: COLORS.primary,
-  },
-  filterChipText: {
+  channelDescription: {
     fontSize: 14,
     color: COLORS.textSecondary,
-    fontWeight: '500',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 20,
   },
-  filterChipTextActive: {
+  watchButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 12,
+    gap: 8,
+  },
+  watchButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
     color: COLORS.background,
   },
-  listContent: {
-    padding: 16,
-    paddingTop: 8,
-  },
-  sermonCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: 16,
-    marginBottom: 16,
-    overflow: 'hidden',
-  },
-  thumbnailContainer: {
-    height: 180,
-    backgroundColor: COLORS.card,
-    position: 'relative',
-  },
-  thumbnailPlaceholder: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.card,
-  },
-  playOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sermonInfo: {
-    padding: 16,
-  },
-  seriesBadge: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: COLORS.primary,
-    marginBottom: 8,
-    textTransform: 'uppercase',
-  },
-  sermonTitle: {
+  sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: COLORS.text,
-    marginBottom: 4,
+    marginHorizontal: 16,
+    marginTop: 24,
+    marginBottom: 12,
   },
-  sermonSpeaker: {
-    fontSize: 14,
-    color: COLORS.primary,
-    marginBottom: 4,
+  linkCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    padding: 16,
+    borderRadius: 12,
   },
-  sermonDate: {
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    marginBottom: 8,
-  },
-  sermonDescription: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    lineHeight: 20,
-  },
-  emptyContainer: {
-    flex: 1,
+  linkIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: COLORS.primary + '22',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 64,
+    marginRight: 12,
   },
-  emptyText: {
+  linkContent: {
+    flex: 1,
+  },
+  linkTitle: {
     fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
+  linkSubtitle: {
+    fontSize: 13,
     color: COLORS.textSecondary,
+    marginTop: 2,
+  },
+  subscribeCard: {
+    backgroundColor: COLORS.surface,
+    marginHorizontal: 16,
+    marginTop: 24,
+    padding: 24,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  subscribeTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  subscribeText: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  subscribeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF0000',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 10,
+    gap: 8,
+  },
+  subscribeButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  infoCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: COLORS.primary + '11',
+    marginHorizontal: 16,
     marginTop: 16,
+    marginBottom: 24,
+    padding: 16,
+    borderRadius: 12,
+  },
+  infoText: {
+    flex: 1,
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    marginLeft: 12,
+    lineHeight: 18,
   },
 });
