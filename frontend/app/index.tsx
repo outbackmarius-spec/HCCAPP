@@ -202,17 +202,14 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <LinearGradient
-          colors={[COLORS.primary, COLORS.primaryDark]}
-          style={styles.headerGradient}
-        >
+        <View style={styles.header}>
           <View style={styles.logoCircle}>
             <Text style={styles.logoText}>HCC</Text>
             <Text style={styles.logoSubtext}>#RISE26</Text>
           </View>
           <Text style={styles.churchName}>Highfields Community Church</Text>
           <Text style={styles.tagline}>Welcome Home</Text>
-        </LinearGradient>
+        </View>
 
         {/* Check-in Card */}
         <TouchableOpacity
