@@ -186,8 +186,8 @@ export default function LifeGroupsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Life Group Studies</Text>
-        <Text style={styles.headerSubtitle}>Grow together in community</Text>
+        <Text style={styles.headerTitle}>Resources</Text>
+        <Text style={styles.headerSubtitle}>Life Group Studies & More</Text>
       </View>
 
       <FlatList
