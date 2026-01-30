@@ -11,12 +11,11 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
-
-import { Linking } from 'react-native';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
