@@ -235,49 +235,67 @@ async def get_life_groups():
         # Seed with default groups
         default_groups = [
             LifeGroup(
-                name="Faith Foundations",
-                description="A study on the core beliefs of Christianity. Perfect for new believers or those wanting to strengthen their foundation.",
-                leader="Pastor John",
-                schedule="Tuesdays, 7:00 PM",
-                location="Church Hall A",
-                max_members=12,
-                current_members=8
-            ),
-            LifeGroup(
-                name="Marriage & Family",
-                description="Building stronger marriages and families through biblical principles and community support.",
-                leader="David & Sarah",
-                schedule="Wednesdays, 6:30 PM",
-                location="Fellowship Room",
-                max_members=10,
-                current_members=6
-            ),
-            LifeGroup(
-                name="Young Adults Connect",
-                description="For ages 18-30. Navigating life, faith, and purpose together.",
-                leader="Mike Thompson",
-                schedule="Fridays, 7:30 PM",
-                location="Youth Center",
+                name="Men's Life Group",
+                description="Weekly gathering for men to grow in faith, accountability, and brotherhood through Bible study and fellowship.",
+                leader="Iven Hewitt",
+                schedule="Thursdays, 8:30 AM",
+                location="55 Highfields Road",
                 max_members=15,
-                current_members=11
+                current_members=0
             ),
             LifeGroup(
-                name="Women's Bible Study",
-                description="Deep dive into Scripture with fellowship and prayer. Currently studying the book of Ruth.",
-                leader="Jennifer Adams",
-                schedule="Thursdays, 10:00 AM",
-                location="Room 201",
-                max_members=12,
-                current_members=9
-            ),
-            LifeGroup(
-                name="Men's Breakfast",
-                description="Weekly gathering for men to grow in faith, accountability, and brotherhood.",
-                leader="Robert Chen",
-                schedule="Saturdays, 8:00 AM",
-                location="Cafe Area",
+                name="Young Adults Life Group",
+                description="For young adults navigating life, faith, and purpose together. A great place to connect and grow.",
+                leader="Elijah Bolitho",
+                schedule="Tuesdays, 6:30 PM",
+                location="Highfields Hub",
                 max_members=20,
-                current_members=14
+                current_members=0
+            ),
+            LifeGroup(
+                name="Ladies Craft Group",
+                description="Join us for fellowship, creativity, and fun as we craft together and encourage one another.",
+                leader="Jenny Gaggi",
+                schedule="Thursdays, 10:30 AM",
+                location="Highfields Hub",
+                max_members=15,
+                current_members=0
+            ),
+            LifeGroup(
+                name="Ladies Life Group",
+                description="A welcoming space for women to study the Bible, share life, and grow in faith together.",
+                leader="Alet Serfontein",
+                schedule="Fridays, 9:00 AM",
+                location="Highfields Hub",
+                max_members=15,
+                current_members=0
+            ),
+            LifeGroup(
+                name="Youth Group",
+                description="A fun and faith-filled gathering for youth to connect, learn, and grow together.",
+                leader="Andrew Bell",
+                schedule="Fridays, 6:30 PM",
+                location="Highfields Hub",
+                max_members=30,
+                current_members=0
+            ),
+            LifeGroup(
+                name="Hope Harbour Recovery Group",
+                description="Whether you struggle with hurts, habits or hang ups, this group will be a great step forward to healing.",
+                leader="Rev. Marius Kruger",
+                schedule="Wednesdays, 6:30 PM",
+                location="Highfields Hub",
+                max_members=20,
+                current_members=0
+            ),
+            LifeGroup(
+                name="Prayer Meeting",
+                description="Join us for a time of prayer as we seek God together and lift up our community.",
+                leader="Matt Hooper",
+                schedule="Wednesdays, 5:30 PM",
+                location="Highfields Hub",
+                max_members=30,
+                current_members=0
             )
         ]
         for group in default_groups:
