@@ -54,6 +54,12 @@ export default function HomeScreen() {
   const [questionText, setQuestionText] = useState('');
   const [questionAnonymous, setQuestionAnonymous] = useState(false);
 
+  // Connect form state
+  const [connectName, setConnectName] = useState('');
+  const [connectEmail, setConnectEmail] = useState('');
+  const [connectPhone, setConnectPhone] = useState('');
+  const [connectInterest, setConnectInterest] = useState('');
+
   const handleCheckin = async () => {
     if (!checkinName.trim()) {
       Alert.alert('Error', 'Please enter your name');
