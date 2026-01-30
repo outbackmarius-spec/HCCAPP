@@ -12,6 +12,7 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -255,6 +256,17 @@ export default function HomeScreen() {
             </View>
             <Text style={styles.actionTitle}>Connect Now</Text>
             <Text style={styles.actionSubtitle}>Join a Life Group</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionCard}
+            onPress={() => Linking.openURL('https://tithe.ly/give_new/www/#/tithely/give-one-time/1303414')}
+          >
+            <View style={[styles.actionIcon, { backgroundColor: '#FFD70022' }]}>
+              <Ionicons name="gift" size={28} color="#FFD700" />
+            </View>
+            <Text style={styles.actionTitle}>Give</Text>
+            <Text style={styles.actionSubtitle}>Support our mission</Text>
           </TouchableOpacity>
         </View>
 
