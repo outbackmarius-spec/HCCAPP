@@ -293,8 +293,8 @@ export default function ResourcesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Resources</Text>
-        <Text style={styles.headerSubtitle}>Ministries & Life Groups</Text>
+        <Text style={styles.headerTitle}>Take Your Next Step</Text>
+        <Text style={styles.headerSubtitle}>Get involved and grow in faith</Text>
       </View>
 
       {/* Tab Selector */}

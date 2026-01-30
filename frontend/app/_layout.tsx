@@ -53,9 +53,9 @@ export default function Layout() {
       <Tabs.Screen
         name="lifegroups"
         options={{
-          title: 'Resources',
+          title: 'Next Steps',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="folder-open" size={size} color={color} />
+            <Ionicons name="footsteps" size={size} color={color} />
           ),
         }}
       />
