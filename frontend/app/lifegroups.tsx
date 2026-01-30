@@ -225,9 +225,6 @@ export default function ResourcesScreen() {
   );
 
   const renderGroup = (item: LifeGroup) => {
-    const spotsLeft = item.max_members - item.current_members;
-    const isFull = spotsLeft <= 0;
-
     return (
       <View key={item.id} style={styles.groupCard}>
         <View style={styles.groupHeader}>
@@ -251,30 +248,14 @@ export default function ResourcesScreen() {
             <Ionicons name="location" size={16} color={COLORS.textSecondary} />
             <Text style={styles.detailText}>{item.location}</Text>
           </View>
-          <View style={styles.detailRow}>
-            <Ionicons name="people" size={16} color={COLORS.textSecondary} />
-            <Text style={styles.detailText}>
-              {item.current_members}/{item.max_members} members
-            </Text>
-          </View>
         </View>
 
-        <View style={styles.groupFooter}>
-          <View style={[styles.spotsBadge, isFull && styles.spotsBadgeFull]}>
-            <Text style={[styles.spotsText, isFull && styles.spotsTextFull]}>
-              {isFull ? 'Group Full' : `${spotsLeft} spots left`}
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={[styles.joinButton, isFull && styles.joinButtonDisabled]}
-            onPress={() => openSignup(item)}
-            disabled={isFull}
-          >
-            <Text style={[styles.joinButtonText, isFull && styles.joinButtonTextDisabled]}>
-              {isFull ? 'Waitlist' : 'Join Group'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.joinButton}
+          onPress={() => openSignup(item)}
+        >
+          <Text style={styles.joinButtonText}>Join Group</Text>
+        </TouchableOpacity>
       </View>
     );
   };
