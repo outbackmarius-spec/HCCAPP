@@ -34,6 +34,7 @@ export default function HomeScreen() {
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showPrayerModal, setShowPrayerModal] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState(false);
+  const [showConnectModal, setShowConnectModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [checkedIn, setCheckedIn] = useState(false);
   
