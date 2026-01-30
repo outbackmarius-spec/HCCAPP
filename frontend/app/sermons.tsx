@@ -154,7 +154,7 @@ export default function SermonsScreen() {
         <View style={styles.infoCard}>
           <Ionicons name="information-circle" size={24} color={COLORS.primary} />
           <Text style={styles.infoText}>
-            Our sermons are uploaded to YouTube after each Sunday service. You can also listen to past sermons on Spotify and Apple Podcasts.
+            Our sermons are uploaded to YouTube after each Sunday service.
           </Text>
         </View>
       </ScrollView>
