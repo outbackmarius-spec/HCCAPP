@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
   TextInput,
   Modal,
   KeyboardAvoidingView,
@@ -16,19 +15,25 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 const COLORS = {
   primary: '#00D4D4',
-  background: '#0c0c0c',
-  surface: '#1a1a1a',
-  card: '#242424',
+  primaryDark: '#00A3A3',
+  secondary: '#FF6B6B',
+  accent: '#FFD93D',
+  purple: '#7B68EE',
+  green: '#4CAF50',
+  orange: '#FF9500',
+  pink: '#FF6B9D',
+  background: '#0a0a0a',
+  surface: '#141414',
+  card: '#1e1e1e',
   text: '#FFFFFF',
-  textSecondary: '#888888',
-  success: '#4CAF50',
-  error: '#f44336',
+  textSecondary: '#9CA3AF',
 };
 
 export default function HomeScreen() {
@@ -40,23 +45,19 @@ export default function HomeScreen() {
   const [checkedIn, setCheckedIn] = useState(false);
   const [selectedDay, setSelectedDay] = useState('SUN');
   
-  // Check-in form state
   const [checkinName, setCheckinName] = useState('');
   const [checkinPhone, setCheckinPhone] = useState('');
   const [isFirstTime, setIsFirstTime] = useState(false);
   
-  // Prayer request form state
   const [prayerName, setPrayerName] = useState('');
   const [prayerRequest, setPrayerRequest] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
   
-  // Question form state
   const [questionName, setQuestionName] = useState('');
   const [questionEmail, setQuestionEmail] = useState('');
   const [questionText, setQuestionText] = useState('');
   const [questionAnonymous, setQuestionAnonymous] = useState(false);
 
-  // Connect form state
   const [connectName, setConnectName] = useState('');
   const [connectEmail, setConnectEmail] = useState('');
   const [connectPhone, setConnectPhone] = useState('');
@@ -67,7 +68,6 @@ export default function HomeScreen() {
       Alert.alert('Error', 'Please enter your name');
       return;
     }
-    
     setIsLoading(true);
     try {
       await axios.post(`${API_URL}/api/checkins`, {
@@ -82,7 +82,6 @@ export default function HomeScreen() {
       setIsFirstTime(false);
       Alert.alert('Welcome!', 'You have successfully checked in. God bless you!');
     } catch (error) {
-      console.error('Check-in error:', error);
       Alert.alert('Error', 'Failed to check in. Please try again.');
     } finally {
       setIsLoading(false);
@@ -94,7 +93,6 @@ export default function HomeScreen() {
       Alert.alert('Error', 'Please enter your prayer request');
       return;
     }
-    
     setIsLoading(true);
     try {
       await axios.post(`${API_URL}/api/prayer-requests`, {
@@ -108,7 +106,6 @@ export default function HomeScreen() {
       setIsAnonymous(false);
       Alert.alert('Thank You', 'Your prayer request has been submitted. We are praying for you!');
     } catch (error) {
-      console.error('Prayer request error:', error);
       Alert.alert('Error', 'Failed to submit prayer request. Please try again.');
     } finally {
       setIsLoading(false);
@@ -120,7 +117,6 @@ export default function HomeScreen() {
       Alert.alert('Error', 'Please enter your question');
       return;
     }
-    
     setIsLoading(true);
     try {
       await axios.post(`${API_URL}/api/questions`, {
@@ -136,7 +132,6 @@ export default function HomeScreen() {
       setQuestionAnonymous(false);
       Alert.alert('Thank You', 'Your question has been submitted. Someone will reach out to you soon!');
     } catch (error) {
-      console.error('Question error:', error);
       Alert.alert('Error', 'Failed to submit question. Please try again.');
     } finally {
       setIsLoading(false);
@@ -148,7 +143,6 @@ export default function HomeScreen() {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-    
     setIsLoading(true);
     try {
       await axios.post(`${API_URL}/api/life-groups/connect`, {
@@ -164,27 +158,61 @@ export default function HomeScreen() {
       setConnectInterest('');
       Alert.alert('Thank You!', 'We received your request to connect! Someone from our team will reach out to you soon.');
     } catch (error) {
-      console.error('Connect error:', error);
       Alert.alert('Error', 'Failed to submit. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  
+  const DAY_COLORS: { [key: string]: string[] } = {
+    'SUN': ['#FF6B6B', '#FF8E8E'],
+    'MON': ['#4ECDC4', '#45B7AA'],
+    'TUE': ['#7B68EE', '#9683EC'],
+    'WED': ['#FFD93D', '#FFE566'],
+    'THU': ['#FF9500', '#FFB347'],
+    'FRI': ['#FF6B9D', '#FF8EB3'],
+    'SAT': ['#6C5CE7', '#8B7CF0'],
+  };
+
+  const EVENTS: { [key: string]: { name: string; time: string; icon: string }[] } = {
+    'SUN': [{ name: 'Sunday Service', time: '9:00 AM', icon: 'people' }],
+    'MON': [
+      { name: "Men's Coffee at Kerb Cafe", time: '8:00 AM', icon: 'cafe' },
+      { name: 'HUB Singers Practice', time: '5:30 PM', icon: 'musical-notes' },
+    ],
+    'TUE': [{ name: 'Young Adults Life Group', time: '6:30 PM', icon: 'people-circle' }],
+    'WED': [
+      { name: 'Prayer Meeting', time: '5:30 PM', icon: 'hand-left' },
+      { name: 'Hope Harbour Recovery Group', time: '6:30 PM', icon: 'heart' },
+    ],
+    'THU': [
+      { name: "Men's Life Group", time: '8:30 AM', icon: 'book' },
+      { name: 'Ladies Craft Group', time: '10:30 AM', icon: 'color-palette' },
+    ],
+    'FRI': [
+      { name: 'Ladies Life Group', time: '9:00 AM', icon: 'book' },
+      { name: 'Youth Group', time: '6:30 PM - 8:00 PM', icon: 'happy' },
+    ],
+    'SAT': [],
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header with Logo */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <View style={styles.logoCircle}>
-              <Text style={styles.logoText}>HCC</Text>
-              <Text style={styles.logoSubtext}>#RISE26</Text>
-            </View>
+        {/* Header */}
+        <LinearGradient
+          colors={[COLORS.primary, COLORS.primaryDark]}
+          style={styles.headerGradient}
+        >
+          <View style={styles.logoCircle}>
+            <Text style={styles.logoText}>HCC</Text>
+            <Text style={styles.logoSubtext}>#RISE26</Text>
           </View>
           <Text style={styles.churchName}>Highfields Community Church</Text>
           <Text style={styles.tagline}>Welcome Home</Text>
-        </View>
+        </LinearGradient>
 
         {/* Check-in Card */}
         <TouchableOpacity
@@ -192,482 +220,257 @@ export default function HomeScreen() {
           onPress={() => !checkedIn && setShowCheckinModal(true)}
           disabled={checkedIn}
         >
-          <View style={styles.checkinIcon}>
-            <Ionicons
-              name={checkedIn ? 'checkmark-circle' : 'location'}
-              size={40}
-              color={checkedIn ? COLORS.success : COLORS.primary}
-            />
-          </View>
-          <View style={styles.checkinContent}>
-            <Text style={styles.checkinTitle}>
-              {checkedIn ? 'You\'re Checked In!' : 'Tap to Check In'}
-            </Text>
-            <Text style={styles.checkinSubtitle}>
-              {checkedIn
-                ? 'Welcome! We\'re glad you\'re here.'
-                : 'Let us know you\'re here today'}
-            </Text>
-          </View>
-          {!checkedIn && (
-            <Ionicons name="chevron-forward" size={24} color={COLORS.textSecondary} />
-          )}
+          <LinearGradient
+            colors={checkedIn ? [COLORS.green, '#45a049'] : [COLORS.primary, COLORS.primaryDark]}
+            style={styles.checkinGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
+            <View style={styles.checkinIcon}>
+              <Ionicons
+                name={checkedIn ? 'checkmark-circle' : 'location'}
+                size={36}
+                color="#FFFFFF"
+              />
+            </View>
+            <View style={styles.checkinContent}>
+              <Text style={styles.checkinTitle}>
+                {checkedIn ? "You're Checked In!" : 'Tap to Check In'}
+              </Text>
+              <Text style={styles.checkinSubtitle}>
+                {checkedIn ? "Welcome! We're glad you're here." : "Let us know you're here today"}
+              </Text>
+            </View>
+            {!checkedIn && <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />}
+          </LinearGradient>
         </TouchableOpacity>
 
-        {/* Welcome Message */}
-        <View style={styles.welcomeCard}>
-          <Text style={styles.welcomeTitle}>Welcome to Church!</Text>
-          <Text style={styles.welcomeText}>
-            We're so glad you're here. Whether you're visiting for the first time or
-            you've been here for years, you're part of our family.
-          </Text>
-        </View>
-
         {/* Quick Actions */}
-        <Text style={styles.sectionTitle}>How Can We Help?</Text>
+        <View style={styles.sectionHeader}>
+          <View style={[styles.sectionDot, { backgroundColor: COLORS.purple }]} />
+          <Text style={styles.sectionTitle}>How Can We Help?</Text>
+        </View>
+        
         <View style={styles.actionsGrid}>
-          <TouchableOpacity
-            style={styles.actionCard}
-            onPress={() => setShowPrayerModal(true)}
-          >
-            <View style={[styles.actionIcon, { backgroundColor: '#7B68EE22' }]}>
-              <Ionicons name="hand-left" size={28} color="#7B68EE" />
-            </View>
-            <Text style={styles.actionTitle}>Prayer Request</Text>
-            <Text style={styles.actionSubtitle}>We'll pray for you</Text>
+          <TouchableOpacity style={styles.actionCard} onPress={() => setShowPrayerModal(true)}>
+            <LinearGradient colors={['#7B68EE', '#9683EC']} style={styles.actionGradient}>
+              <Ionicons name="hand-left" size={28} color="#FFFFFF" />
+            </LinearGradient>
+            <Text style={styles.actionTitle}>Prayer</Text>
+            <Text style={styles.actionSubtitle}>Request</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionCard}
-            onPress={() => setShowQuestionModal(true)}
-          >
-            <View style={[styles.actionIcon, { backgroundColor: '#FF6B6B22' }]}>
-              <Ionicons name="help-circle" size={28} color="#FF6B6B" />
-            </View>
-            <Text style={styles.actionTitle}>Questions?</Text>
-            <Text style={styles.actionSubtitle}>We're here to help</Text>
+          <TouchableOpacity style={styles.actionCard} onPress={() => setShowQuestionModal(true)}>
+            <LinearGradient colors={['#FF6B6B', '#FF8E8E']} style={styles.actionGradient}>
+              <Ionicons name="help-circle" size={28} color="#FFFFFF" />
+            </LinearGradient>
+            <Text style={styles.actionTitle}>Questions</Text>
+            <Text style={styles.actionSubtitle}>Ask us</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionCard}
-            onPress={() => setShowConnectModal(true)}
-          >
-            <View style={[styles.actionIcon, { backgroundColor: '#4CAF5022' }]}>
-              <Ionicons name="people" size={28} color="#4CAF50" />
-            </View>
-            <Text style={styles.actionTitle}>Connect Now</Text>
-            <Text style={styles.actionSubtitle}>Join a Life Group</Text>
+          <TouchableOpacity style={styles.actionCard} onPress={() => setShowConnectModal(true)}>
+            <LinearGradient colors={['#4CAF50', '#66BB6A']} style={styles.actionGradient}>
+              <Ionicons name="people" size={28} color="#FFFFFF" />
+            </LinearGradient>
+            <Text style={styles.actionTitle}>Connect</Text>
+            <Text style={styles.actionSubtitle}>Join a group</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionCard}
+          <TouchableOpacity 
+            style={styles.actionCard} 
             onPress={() => Linking.openURL('https://tithe.ly/give_new/www/#/tithely/give-one-time/1303414')}
           >
-            <View style={[styles.actionIcon, { backgroundColor: '#FFD70022' }]}>
-              <Ionicons name="gift" size={28} color="#FFD700" />
-            </View>
+            <LinearGradient colors={['#FFD93D', '#FFE566']} style={styles.actionGradient}>
+              <Ionicons name="gift" size={28} color="#000000" />
+            </LinearGradient>
             <Text style={styles.actionTitle}>Give</Text>
-            <Text style={styles.actionSubtitle}>Support our mission</Text>
+            <Text style={styles.actionSubtitle}>Tithe.ly</Text>
           </TouchableOpacity>
         </View>
 
-        {/* This Week */}
-        <View style={styles.thisWeekCard}>
-          <Text style={styles.thisWeekTitle}>Weekly at HCC</Text>
-          
+        {/* Weekly Schedule */}
+        <View style={styles.sectionHeader}>
+          <View style={[styles.sectionDot, { backgroundColor: COLORS.orange }]} />
+          <Text style={styles.sectionTitle}>Weekly at HCC</Text>
+        </View>
+
+        <View style={styles.weeklyCard}>
           {/* Day Tabs */}
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.dayTabsContainer}
-          >
-            {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((day) => (
-              <TouchableOpacity
-                key={day}
-                style={[styles.dayTab, selectedDay === day && styles.dayTabActive]}
-                onPress={() => setSelectedDay(day)}
-              >
-                <Text style={[styles.dayTabText, selectedDay === day && styles.dayTabTextActive]}>
-                  {day}
-                </Text>
-              </TouchableOpacity>
-            ))}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dayTabsScroll}>
+            <View style={styles.dayTabsContainer}>
+              {DAYS.map((day) => (
+                <TouchableOpacity
+                  key={day}
+                  onPress={() => setSelectedDay(day)}
+                >
+                  {selectedDay === day ? (
+                    <LinearGradient
+                      colors={DAY_COLORS[day]}
+                      style={styles.dayTabActive}
+                    >
+                      <Text style={styles.dayTabTextActive}>{day}</Text>
+                    </LinearGradient>
+                  ) : (
+                    <View style={styles.dayTab}>
+                      <Text style={styles.dayTabText}>{day}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
           </ScrollView>
 
-          {/* Events for selected day */}
-          <View style={styles.dayEventsContainer}>
-            {selectedDay === 'SUN' && (
-              <View style={styles.dayEventItem}>
-                <Ionicons name="people" size={20} color={COLORS.primary} />
-                <View style={styles.dayEventInfo}>
-                  <Text style={styles.dayEventName}>Sunday Service</Text>
-                  <Text style={styles.dayEventTime}>9:00 AM</Text>
-                </View>
-              </View>
-            )}
-
-            {selectedDay === 'MON' && (
-              <>
-                <View style={styles.dayEventItem}>
-                  <Ionicons name="cafe" size={20} color={COLORS.primary} />
-                  <View style={styles.dayEventInfo}>
-                    <Text style={styles.dayEventName}>Men's Coffee at Kerb Cafe</Text>
-                    <Text style={styles.dayEventTime}>8:00 AM</Text>
+          {/* Events */}
+          <View style={styles.eventsContainer}>
+            {EVENTS[selectedDay].length > 0 ? (
+              EVENTS[selectedDay].map((event, index) => (
+                <View key={index} style={styles.eventItem}>
+                  <LinearGradient
+                    colors={DAY_COLORS[selectedDay]}
+                    style={styles.eventIconContainer}
+                  >
+                    <Ionicons name={event.icon as any} size={20} color="#FFFFFF" />
+                  </LinearGradient>
+                  <View style={styles.eventInfo}>
+                    <Text style={styles.eventName}>{event.name}</Text>
+                    <Text style={styles.eventTime}>{event.time}</Text>
                   </View>
                 </View>
-                <View style={styles.dayEventItem}>
-                  <Ionicons name="musical-notes" size={20} color={COLORS.primary} />
-                  <View style={styles.dayEventInfo}>
-                    <Text style={styles.dayEventName}>HUB Singers Practice</Text>
-                    <Text style={styles.dayEventTime}>5:30 PM</Text>
-                  </View>
-                </View>
-              </>
-            )}
-
-            {selectedDay === 'TUE' && (
-              <View style={styles.dayEventItem}>
-                <Ionicons name="people-circle" size={20} color={COLORS.primary} />
-                <View style={styles.dayEventInfo}>
-                  <Text style={styles.dayEventName}>Young Adults Life Group</Text>
-                  <Text style={styles.dayEventTime}>6:30 PM</Text>
-                </View>
-              </View>
-            )}
-
-            {selectedDay === 'WED' && (
-              <>
-                <View style={styles.dayEventItem}>
-                  <Ionicons name="hand-left" size={20} color={COLORS.primary} />
-                  <View style={styles.dayEventInfo}>
-                    <Text style={styles.dayEventName}>Prayer Meeting</Text>
-                    <Text style={styles.dayEventTime}>5:30 PM</Text>
-                  </View>
-                </View>
-                <View style={styles.dayEventItem}>
-                  <Ionicons name="heart" size={20} color={COLORS.primary} />
-                  <View style={styles.dayEventInfo}>
-                    <Text style={styles.dayEventName}>Hope Harbour Recovery Group</Text>
-                    <Text style={styles.dayEventTime}>6:30 PM</Text>
-                  </View>
-                </View>
-              </>
-            )}
-
-            {selectedDay === 'THU' && (
-              <>
-                <View style={styles.dayEventItem}>
-                  <Ionicons name="book" size={20} color={COLORS.primary} />
-                  <View style={styles.dayEventInfo}>
-                    <Text style={styles.dayEventName}>Men's Life Group</Text>
-                    <Text style={styles.dayEventTime}>8:30 AM</Text>
-                  </View>
-                </View>
-                <View style={styles.dayEventItem}>
-                  <Ionicons name="color-palette" size={20} color={COLORS.primary} />
-                  <View style={styles.dayEventInfo}>
-                    <Text style={styles.dayEventName}>Ladies Craft Group</Text>
-                    <Text style={styles.dayEventTime}>10:30 AM</Text>
-                  </View>
-                </View>
-              </>
-            )}
-
-            {selectedDay === 'FRI' && (
-              <>
-                <View style={styles.dayEventItem}>
-                  <Ionicons name="book" size={20} color={COLORS.primary} />
-                  <View style={styles.dayEventInfo}>
-                    <Text style={styles.dayEventName}>Ladies Life Group</Text>
-                    <Text style={styles.dayEventTime}>9:00 AM</Text>
-                  </View>
-                </View>
-                <View style={styles.dayEventItem}>
-                  <Ionicons name="happy" size={20} color={COLORS.primary} />
-                  <View style={styles.dayEventInfo}>
-                    <Text style={styles.dayEventName}>Youth Group</Text>
-                    <Text style={styles.dayEventTime}>6:30 PM - 8:00 PM</Text>
-                  </View>
-                </View>
-              </>
-            )}
-
-            {selectedDay === 'SAT' && (
+              ))
+            ) : (
               <View style={styles.noEventsContainer}>
-                <Ionicons name="calendar-outline" size={32} color={COLORS.textSecondary} />
+                <Ionicons name="sunny" size={40} color={COLORS.accent} />
                 <Text style={styles.noEventsText}>No scheduled events</Text>
                 <Text style={styles.noEventsSubtext}>Enjoy your rest day!</Text>
               </View>
             )}
           </View>
         </View>
+
+        <View style={{ height: 20 }} />
       </ScrollView>
 
       {/* Check-in Modal */}
       <Modal visible={showCheckinModal} animationType="slide" transparent>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
+            <LinearGradient colors={[COLORS.primary, COLORS.primaryDark]} style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Check In</Text>
               <TouchableOpacity onPress={() => setShowCheckinModal(false)}>
-                <Ionicons name="close" size={28} color={COLORS.text} />
+                <Ionicons name="close" size={28} color="#FFFFFF" />
+              </TouchableOpacity>
+            </LinearGradient>
+            <View style={styles.modalBody}>
+              <Text style={styles.inputLabel}>Your Name *</Text>
+              <TextInput style={styles.input} placeholder="Enter your name" placeholderTextColor={COLORS.textSecondary} value={checkinName} onChangeText={setCheckinName} />
+              <Text style={styles.inputLabel}>Phone (optional)</Text>
+              <TextInput style={styles.input} placeholder="Enter your phone number" placeholderTextColor={COLORS.textSecondary} value={checkinPhone} onChangeText={setCheckinPhone} keyboardType="phone-pad" />
+              <TouchableOpacity style={styles.checkboxRow} onPress={() => setIsFirstTime(!isFirstTime)}>
+                <View style={[styles.checkbox, isFirstTime && styles.checkboxChecked]}>
+                  {isFirstTime && <Ionicons name="checkmark" size={16} color="#000" />}
+                </View>
+                <Text style={styles.checkboxLabel}>This is my first time visiting</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.submitButton} onPress={handleCheckin} disabled={isLoading}>
+                {isLoading ? <ActivityIndicator color="#000" /> : <Text style={styles.submitButtonText}>Check In</Text>}
               </TouchableOpacity>
             </View>
-
-            <Text style={styles.inputLabel}>Your Name *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your name"
-              placeholderTextColor={COLORS.textSecondary}
-              value={checkinName}
-              onChangeText={setCheckinName}
-            />
-
-            <Text style={styles.inputLabel}>Phone (optional)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your phone number"
-              placeholderTextColor={COLORS.textSecondary}
-              value={checkinPhone}
-              onChangeText={setCheckinPhone}
-              keyboardType="phone-pad"
-            />
-
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => setIsFirstTime(!isFirstTime)}
-            >
-              <View style={[styles.checkbox, isFirstTime && styles.checkboxChecked]}>
-                {isFirstTime && <Ionicons name="checkmark" size={16} color={COLORS.background} />}
-              </View>
-              <Text style={styles.checkboxLabel}>This is my first time visiting</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={handleCheckin}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color={COLORS.background} />
-              ) : (
-                <Text style={styles.submitButtonText}>Check In</Text>
-              )}
-            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </Modal>
 
       {/* Prayer Request Modal */}
       <Modal visible={showPrayerModal} animationType="slide" transparent>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
+            <LinearGradient colors={['#7B68EE', '#9683EC']} style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Prayer Request</Text>
               <TouchableOpacity onPress={() => setShowPrayerModal(false)}>
-                <Ionicons name="close" size={28} color={COLORS.text} />
+                <Ionicons name="close" size={28} color="#FFFFFF" />
+              </TouchableOpacity>
+            </LinearGradient>
+            <View style={styles.modalBody}>
+              <TouchableOpacity style={styles.checkboxRow} onPress={() => setIsAnonymous(!isAnonymous)}>
+                <View style={[styles.checkbox, isAnonymous && styles.checkboxChecked]}>
+                  {isAnonymous && <Ionicons name="checkmark" size={16} color="#000" />}
+                </View>
+                <Text style={styles.checkboxLabel}>Submit anonymously</Text>
+              </TouchableOpacity>
+              {!isAnonymous && (
+                <>
+                  <Text style={styles.inputLabel}>Your Name</Text>
+                  <TextInput style={styles.input} placeholder="Enter your name" placeholderTextColor={COLORS.textSecondary} value={prayerName} onChangeText={setPrayerName} />
+                </>
+              )}
+              <Text style={styles.inputLabel}>Prayer Request *</Text>
+              <TextInput style={[styles.input, styles.textArea]} placeholder="Share your prayer request..." placeholderTextColor={COLORS.textSecondary} value={prayerRequest} onChangeText={setPrayerRequest} multiline numberOfLines={4} textAlignVertical="top" />
+              <TouchableOpacity style={[styles.submitButton, { backgroundColor: '#7B68EE' }]} onPress={handlePrayerRequest} disabled={isLoading}>
+                {isLoading ? <ActivityIndicator color="#FFF" /> : <Text style={[styles.submitButtonText, { color: '#FFF' }]}>Submit Request</Text>}
               </TouchableOpacity>
             </View>
-
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => setIsAnonymous(!isAnonymous)}
-            >
-              <View style={[styles.checkbox, isAnonymous && styles.checkboxChecked]}>
-                {isAnonymous && <Ionicons name="checkmark" size={16} color={COLORS.background} />}
-              </View>
-              <Text style={styles.checkboxLabel}>Submit anonymously</Text>
-            </TouchableOpacity>
-
-            {!isAnonymous && (
-              <>
-                <Text style={styles.inputLabel}>Your Name</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your name"
-                  placeholderTextColor={COLORS.textSecondary}
-                  value={prayerName}
-                  onChangeText={setPrayerName}
-                />
-              </>
-            )}
-
-            <Text style={styles.inputLabel}>Prayer Request *</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Share your prayer request..."
-              placeholderTextColor={COLORS.textSecondary}
-              value={prayerRequest}
-              onChangeText={setPrayerRequest}
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
-
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={handlePrayerRequest}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color={COLORS.background} />
-              ) : (
-                <Text style={styles.submitButtonText}>Submit Request</Text>
-              )}
-            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </Modal>
 
       {/* Question Modal */}
       <Modal visible={showQuestionModal} animationType="slide" transparent>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
+            <LinearGradient colors={['#FF6B6B', '#FF8E8E']} style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Ask a Question</Text>
               <TouchableOpacity onPress={() => setShowQuestionModal(false)}>
-                <Ionicons name="close" size={28} color={COLORS.text} />
+                <Ionicons name="close" size={28} color="#FFFFFF" />
+              </TouchableOpacity>
+            </LinearGradient>
+            <View style={styles.modalBody}>
+              <TouchableOpacity style={styles.checkboxRow} onPress={() => setQuestionAnonymous(!questionAnonymous)}>
+                <View style={[styles.checkbox, questionAnonymous && styles.checkboxChecked]}>
+                  {questionAnonymous && <Ionicons name="checkmark" size={16} color="#000" />}
+                </View>
+                <Text style={styles.checkboxLabel}>Submit anonymously</Text>
+              </TouchableOpacity>
+              {!questionAnonymous && (
+                <>
+                  <Text style={styles.inputLabel}>Your Name</Text>
+                  <TextInput style={styles.input} placeholder="Enter your name" placeholderTextColor={COLORS.textSecondary} value={questionName} onChangeText={setQuestionName} />
+                  <Text style={styles.inputLabel}>Email</Text>
+                  <TextInput style={styles.input} placeholder="Enter your email" placeholderTextColor={COLORS.textSecondary} value={questionEmail} onChangeText={setQuestionEmail} keyboardType="email-address" autoCapitalize="none" />
+                </>
+              )}
+              <Text style={styles.inputLabel}>Your Question *</Text>
+              <TextInput style={[styles.input, styles.textArea]} placeholder="What would you like to know?" placeholderTextColor={COLORS.textSecondary} value={questionText} onChangeText={setQuestionText} multiline numberOfLines={4} textAlignVertical="top" />
+              <TouchableOpacity style={[styles.submitButton, { backgroundColor: '#FF6B6B' }]} onPress={handleQuestion} disabled={isLoading}>
+                {isLoading ? <ActivityIndicator color="#FFF" /> : <Text style={[styles.submitButtonText, { color: '#FFF' }]}>Submit Question</Text>}
               </TouchableOpacity>
             </View>
-
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => setQuestionAnonymous(!questionAnonymous)}
-            >
-              <View style={[styles.checkbox, questionAnonymous && styles.checkboxChecked]}>
-                {questionAnonymous && <Ionicons name="checkmark" size={16} color={COLORS.background} />}
-              </View>
-              <Text style={styles.checkboxLabel}>Submit anonymously</Text>
-            </TouchableOpacity>
-
-            {!questionAnonymous && (
-              <>
-                <Text style={styles.inputLabel}>Your Name</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your name"
-                  placeholderTextColor={COLORS.textSecondary}
-                  value={questionName}
-                  onChangeText={setQuestionName}
-                />
-
-                <Text style={styles.inputLabel}>Email</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your email"
-                  placeholderTextColor={COLORS.textSecondary}
-                  value={questionEmail}
-                  onChangeText={setQuestionEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </>
-            )}
-
-            <Text style={styles.inputLabel}>Your Question *</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="What would you like to know?"
-              placeholderTextColor={COLORS.textSecondary}
-              value={questionText}
-              onChangeText={setQuestionText}
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
-
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={handleQuestion}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color={COLORS.background} />
-              ) : (
-                <Text style={styles.submitButtonText}>Submit Question</Text>
-              )}
-            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </Modal>
 
-      {/* Connect Now Modal */}
+      {/* Connect Modal */}
       <Modal visible={showConnectModal} animationType="slide" transparent>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
+            <LinearGradient colors={['#4CAF50', '#66BB6A']} style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Connect Now</Text>
               <TouchableOpacity onPress={() => setShowConnectModal(false)}>
-                <Ionicons name="close" size={28} color={COLORS.text} />
+                <Ionicons name="close" size={28} color="#FFFFFF" />
+              </TouchableOpacity>
+            </LinearGradient>
+            <View style={styles.modalBody}>
+              <Text style={styles.connectIntro}>We'd love to help you find your place in our community!</Text>
+              <Text style={styles.inputLabel}>Your Name *</Text>
+              <TextInput style={styles.input} placeholder="Enter your full name" placeholderTextColor={COLORS.textSecondary} value={connectName} onChangeText={setConnectName} />
+              <Text style={styles.inputLabel}>Email *</Text>
+              <TextInput style={styles.input} placeholder="Enter your email" placeholderTextColor={COLORS.textSecondary} value={connectEmail} onChangeText={setConnectEmail} keyboardType="email-address" autoCapitalize="none" />
+              <Text style={styles.inputLabel}>Phone *</Text>
+              <TextInput style={styles.input} placeholder="Enter your phone number" placeholderTextColor={COLORS.textSecondary} value={connectPhone} onChangeText={setConnectPhone} keyboardType="phone-pad" />
+              <Text style={styles.inputLabel}>I'm interested in...</Text>
+              <TextInput style={styles.input} placeholder="e.g., Joining a Life Group, Youth Group" placeholderTextColor={COLORS.textSecondary} value={connectInterest} onChangeText={setConnectInterest} />
+              <TouchableOpacity style={[styles.submitButton, { backgroundColor: '#4CAF50' }]} onPress={handleConnect} disabled={isLoading}>
+                {isLoading ? <ActivityIndicator color="#FFF" /> : <Text style={[styles.submitButtonText, { color: '#FFF' }]}>Connect Me</Text>}
               </TouchableOpacity>
             </View>
-
-            <Text style={styles.connectIntro}>
-              We'd love to help you find your place in our community! Fill out the form below and someone will reach out to help you get connected.
-            </Text>
-
-            <Text style={styles.inputLabel}>Your Name *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your full name"
-              placeholderTextColor={COLORS.textSecondary}
-              value={connectName}
-              onChangeText={setConnectName}
-            />
-
-            <Text style={styles.inputLabel}>Email *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your email"
-              placeholderTextColor={COLORS.textSecondary}
-              value={connectEmail}
-              onChangeText={setConnectEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-
-            <Text style={styles.inputLabel}>Phone *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your phone number"
-              placeholderTextColor={COLORS.textSecondary}
-              value={connectPhone}
-              onChangeText={setConnectPhone}
-              keyboardType="phone-pad"
-            />
-
-            <Text style={styles.inputLabel}>I'm interested in...</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="e.g., Joining a Life Group, Youth Group, etc."
-              placeholderTextColor={COLORS.textSecondary}
-              value={connectInterest}
-              onChangeText={setConnectInterest}
-            />
-
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={handleConnect}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color={COLORS.background} />
-              ) : (
-                <Text style={styles.submitButtonText}>Connect Me</Text>
-              )}
-            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </Modal>
@@ -680,59 +483,63 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  header: {
+  headerGradient: {
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingVertical: 30,
     paddingHorizontal: 16,
-  },
-  logoContainer: {
-    marginBottom: 16,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   logoCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 4,
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.background,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    backgroundColor: 'rgba(0,0,0,0.3)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 12,
   },
   logoText: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: COLORS.text,
+    color: '#FFFFFF',
   },
   logoSubtext: {
-    fontSize: 10,
-    color: COLORS.textSecondary,
+    fontSize: 9,
+    color: 'rgba(255,255,255,0.8)',
     marginTop: 2,
   },
   churchName: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: COLORS.text,
+    color: '#FFFFFF',
     textAlign: 'center',
   },
   tagline: {
-    fontSize: 16,
-    color: COLORS.primary,
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.9)',
     marginTop: 4,
   },
   checkinCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.surface,
     marginHorizontal: 16,
-    marginBottom: 16,
-    padding: 20,
+    marginTop: -20,
     borderRadius: 16,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
   checkedInCard: {
-    borderColor: COLORS.success,
-    backgroundColor: '#4CAF5011',
+    shadowColor: COLORS.green,
+  },
+  checkinGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
   },
   checkinIcon: {
     marginRight: 16,
@@ -743,54 +550,45 @@ const styles = StyleSheet.create({
   checkinTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: COLORS.text,
+    color: '#FFFFFF',
   },
   checkinSubtitle: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.85)',
     marginTop: 4,
   },
-  welcomeCard: {
-    backgroundColor: COLORS.surface,
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 16,
-    marginBottom: 24,
-    padding: 20,
-    borderRadius: 16,
+    marginTop: 28,
+    marginBottom: 16,
   },
-  welcomeTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.text,
-    marginBottom: 8,
-  },
-  welcomeText: {
-    fontSize: 15,
-    color: COLORS.textSecondary,
-    lineHeight: 22,
+  sectionDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 10,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: COLORS.text,
-    marginHorizontal: 16,
-    marginBottom: 12,
   },
   actionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     gap: 12,
-    marginBottom: 24,
   },
   actionCard: {
-    width: '30%',
-    flexGrow: 1,
+    width: '47%',
     backgroundColor: COLORS.surface,
-    padding: 16,
     borderRadius: 16,
+    padding: 16,
     alignItems: 'center',
   },
-  actionIcon: {
+  actionGradient: {
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -799,43 +597,38 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   actionTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     color: COLORS.text,
-    textAlign: 'center',
   },
   actionSubtitle: {
     fontSize: 12,
     color: COLORS.textSecondary,
-    textAlign: 'center',
-    marginTop: 4,
+    marginTop: 2,
   },
-  thisWeekCard: {
+  weeklyCard: {
     backgroundColor: COLORS.surface,
     marginHorizontal: 16,
-    marginBottom: 24,
-    padding: 20,
-    borderRadius: 16,
+    borderRadius: 20,
+    padding: 16,
   },
-  thisWeekTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.text,
+  dayTabsScroll: {
     marginBottom: 16,
   },
   dayTabsContainer: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 16,
   },
   dayTab: {
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: COLORS.card,
   },
   dayTabActive: {
-    backgroundColor: COLORS.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
   },
   dayTabText: {
     fontSize: 12,
@@ -843,12 +636,14 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
   },
   dayTabTextActive: {
-    color: COLORS.background,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
-  dayEventsContainer: {
+  eventsContainer: {
     minHeight: 80,
   },
-  dayEventItem: {
+  eventItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.card,
@@ -856,95 +651,68 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 10,
   },
-  dayEventInfo: {
+  eventIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eventInfo: {
     flex: 1,
     marginLeft: 12,
   },
-  dayEventName: {
-    fontSize: 15,
+  eventName: {
+    fontSize: 14,
     fontWeight: '600',
     color: COLORS.text,
   },
-  dayEventTime: {
-    fontSize: 13,
+  eventTime: {
+    fontSize: 12,
     color: COLORS.primary,
     marginTop: 2,
   },
   noEventsContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
+    paddingVertical: 24,
   },
   noEventsText: {
     fontSize: 15,
     color: COLORS.textSecondary,
-    marginTop: 8,
+    marginTop: 10,
   },
   noEventsSubtext: {
     fontSize: 13,
     color: COLORS.textSecondary,
     marginTop: 4,
   },
-  eventItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  eventDate: {
-    width: 50,
-    height: 50,
-    backgroundColor: COLORS.primary + '22',
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  eventDay: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: COLORS.primary,
-  },
-  eventDateNum: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.text,
-  },
-  eventInfo: {
-    flex: 1,
-  },
-  eventName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: COLORS.text,
-  },
-  eventTime: {
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    marginTop: 2,
-  },
-  // Modal Styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(0,0,0,0.8)',
     justifyContent: 'flex-end',
   },
   modalContent: {
     backgroundColor: COLORS.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: 24,
     maxHeight: '90%',
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    padding: 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
   },
   modalTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: COLORS.text,
+    color: '#FFFFFF',
+  },
+  modalBody: {
+    padding: 20,
   },
   inputLabel: {
     fontSize: 14,
@@ -959,9 +727,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.text,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   textArea: {
-    height: 120,
+    height: 100,
     textAlignVertical: 'top',
   },
   checkboxRow: {
@@ -1002,6 +772,6 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: COLORS.background,
+    color: '#000000',
   },
 });
