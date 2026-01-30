@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Linking,
   ScrollView,
-  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { WebView } from 'react-native-webview';
+import * as WebBrowser from 'expo-web-browser';
 
 const COLORS = {
   primary: '#00D4D4',
@@ -21,52 +19,14 @@ const COLORS = {
   textSecondary: '#888888',
 };
 
-const YOUTUBE_CHANNEL_ID = 'UCGKqUGpw1M6kFMKpkfkpCBQ';
 const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@highfieldscommunitychurch3628';
 
 export default function SermonsScreen() {
-  const [showWebView, setShowWebView] = useState(false);
 
-  const openYouTubeChannel = () => {
-    Linking.openURL(YOUTUBE_CHANNEL_URL);
+  const openYouTube = async (path: string = '') => {
+    const url = path ? `${YOUTUBE_CHANNEL_URL}${path}` : YOUTUBE_CHANNEL_URL;
+    await WebBrowser.openBrowserAsync(url);
   };
-
-  const openYouTubeApp = () => {
-    // Try to open YouTube app first, fall back to browser
-    const youtubeAppUrl = `youtube://www.youtube.com/channel/${YOUTUBE_CHANNEL_ID}`;
-    const youtubeWebUrl = YOUTUBE_CHANNEL_URL;
-    
-    Linking.canOpenURL(youtubeAppUrl)
-      .then((supported) => {
-        if (supported) {
-          return Linking.openURL(youtubeAppUrl);
-        } else {
-          return Linking.openURL(youtubeWebUrl);
-        }
-      })
-      .catch(() => {
-        Linking.openURL(youtubeWebUrl);
-      });
-  };
-
-  if (showWebView && Platform.OS === 'web') {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.webViewHeader}>
-          <TouchableOpacity onPress={() => setShowWebView(false)} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={COLORS.text} />
-            <Text style={styles.backButtonText}>Back</Text>
-          </TouchableOpacity>
-        </View>
-        <WebView
-          source={{ uri: `https://www.youtube.com/embed/videoseries?list=UU${YOUTUBE_CHANNEL_ID.substring(2)}` }}
-          style={styles.webView}
-          allowsFullscreenVideo
-          javaScriptEnabled
-        />
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,7 +46,7 @@ export default function SermonsScreen() {
             Watch our latest sermons, worship sessions, and special events on our YouTube channel.
           </Text>
           
-          <TouchableOpacity style={styles.watchButton} onPress={openYouTubeApp}>
+          <TouchableOpacity style={styles.watchButton} onPress={() => openYouTube()}>
             <Ionicons name="play-circle" size={24} color={COLORS.background} />
             <Text style={styles.watchButtonText}>Watch on YouTube</Text>
           </TouchableOpacity>
@@ -95,7 +55,7 @@ export default function SermonsScreen() {
         {/* Quick Access Section */}
         <Text style={styles.sectionTitle}>Quick Access</Text>
         
-        <TouchableOpacity style={styles.linkCard} onPress={openYouTubeChannel}>
+        <TouchableOpacity style={styles.linkCard} onPress={() => openYouTube('/videos')}>
           <View style={styles.linkIconContainer}>
             <Ionicons name="videocam" size={24} color={COLORS.primary} />
           </View>
@@ -106,10 +66,7 @@ export default function SermonsScreen() {
           <Ionicons name="open-outline" size={20} color={COLORS.textSecondary} />
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.linkCard} 
-          onPress={() => Linking.openURL(`${YOUTUBE_CHANNEL_URL}/live`)}
-        >
+        <TouchableOpacity style={styles.linkCard} onPress={() => openYouTube('/streams')}>
           <View style={[styles.linkIconContainer, { backgroundColor: '#FF000022' }]}>
             <Ionicons name="radio" size={24} color="#FF0000" />
           </View>
@@ -120,10 +77,7 @@ export default function SermonsScreen() {
           <Ionicons name="open-outline" size={20} color={COLORS.textSecondary} />
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.linkCard} 
-          onPress={() => Linking.openURL(`${YOUTUBE_CHANNEL_URL}/playlists`)}
-        >
+        <TouchableOpacity style={styles.linkCard} onPress={() => openYouTube('/playlists')}>
           <View style={[styles.linkIconContainer, { backgroundColor: '#7B68EE22' }]}>
             <Ionicons name="list" size={24} color="#7B68EE" />
           </View>
@@ -143,7 +97,7 @@ export default function SermonsScreen() {
           </Text>
           <TouchableOpacity 
             style={styles.subscribeButton} 
-            onPress={() => Linking.openURL(`${YOUTUBE_CHANNEL_URL}?sub_confirmation=1`)}
+            onPress={() => openYouTube('?sub_confirmation=1')}
           >
             <Ionicons name="logo-youtube" size={20} color="#FFFFFF" />
             <Text style={styles.subscribeButtonText}>Subscribe</Text>
@@ -181,22 +135,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.textSecondary,
     marginTop: 4,
-  },
-  webViewHeader: {
-    padding: 16,
-    backgroundColor: COLORS.surface,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    color: COLORS.text,
-    fontSize: 16,
-    marginLeft: 8,
-  },
-  webView: {
-    flex: 1,
   },
   channelCard: {
     backgroundColor: COLORS.surface,
