@@ -274,85 +274,131 @@ export default function HomeScreen() {
         {/* This Week */}
         <View style={styles.thisWeekCard}>
           <Text style={styles.thisWeekTitle}>Weekly at HCC</Text>
-          <View style={styles.eventItem}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>SUN</Text>
-              <Ionicons name="people" size={18} color={COLORS.text} />
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>Sunday Service</Text>
-              <Text style={styles.eventTime}>9:00 AM</Text>
-            </View>
-          </View>
-          <View style={styles.eventItem}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>MON</Text>
-              <Ionicons name="cafe" size={18} color={COLORS.text} />
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>Men's Coffee at Kerb Cafe</Text>
-              <Text style={styles.eventTime}>8:00 AM</Text>
-            </View>
-          </View>
-          <View style={styles.eventItem}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>MON</Text>
-              <Ionicons name="musical-notes" size={18} color={COLORS.text} />
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>HUB Singers Practice</Text>
-              <Text style={styles.eventTime}>5:30 PM</Text>
-            </View>
-          </View>
-          <View style={styles.eventItem}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>TUE</Text>
-              <Ionicons name="people-circle" size={18} color={COLORS.text} />
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>Young Adults Life Group</Text>
-              <Text style={styles.eventTime}>6:30 PM</Text>
-            </View>
-          </View>
-          <View style={styles.eventItem}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>THU</Text>
-              <Ionicons name="book" size={18} color={COLORS.text} />
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>Men's Bible Study</Text>
-              <Text style={styles.eventTime}>8:30 AM</Text>
-            </View>
-          </View>
-          <View style={styles.eventItem}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>THU</Text>
-              <Ionicons name="color-palette" size={18} color={COLORS.text} />
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>Ladies Craft Group</Text>
-              <Text style={styles.eventTime}>10:00 AM</Text>
-            </View>
-          </View>
-          <View style={styles.eventItem}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>FRI</Text>
-              <Ionicons name="book" size={18} color={COLORS.text} />
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>Ladies Bible Study</Text>
-              <Text style={styles.eventTime}>9:00 AM</Text>
-            </View>
-          </View>
-          <View style={styles.eventItem}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>FRI</Text>
-              <Ionicons name="happy" size={18} color={COLORS.text} />
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>Youth Group</Text>
-              <Text style={styles.eventTime}>6:30 PM - 8:00 PM</Text>
-            </View>
+          
+          {/* Day Tabs */}
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.dayTabsContainer}
+          >
+            {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((day) => (
+              <TouchableOpacity
+                key={day}
+                style={[styles.dayTab, selectedDay === day && styles.dayTabActive]}
+                onPress={() => setSelectedDay(day)}
+              >
+                <Text style={[styles.dayTabText, selectedDay === day && styles.dayTabTextActive]}>
+                  {day}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* Events for selected day */}
+          <View style={styles.dayEventsContainer}>
+            {selectedDay === 'SUN' && (
+              <View style={styles.dayEventItem}>
+                <Ionicons name="people" size={20} color={COLORS.primary} />
+                <View style={styles.dayEventInfo}>
+                  <Text style={styles.dayEventName}>Sunday Service</Text>
+                  <Text style={styles.dayEventTime}>9:00 AM</Text>
+                </View>
+              </View>
+            )}
+
+            {selectedDay === 'MON' && (
+              <>
+                <View style={styles.dayEventItem}>
+                  <Ionicons name="cafe" size={20} color={COLORS.primary} />
+                  <View style={styles.dayEventInfo}>
+                    <Text style={styles.dayEventName}>Men's Coffee at Kerb Cafe</Text>
+                    <Text style={styles.dayEventTime}>8:00 AM</Text>
+                  </View>
+                </View>
+                <View style={styles.dayEventItem}>
+                  <Ionicons name="musical-notes" size={20} color={COLORS.primary} />
+                  <View style={styles.dayEventInfo}>
+                    <Text style={styles.dayEventName}>HUB Singers Practice</Text>
+                    <Text style={styles.dayEventTime}>5:30 PM</Text>
+                  </View>
+                </View>
+              </>
+            )}
+
+            {selectedDay === 'TUE' && (
+              <View style={styles.dayEventItem}>
+                <Ionicons name="people-circle" size={20} color={COLORS.primary} />
+                <View style={styles.dayEventInfo}>
+                  <Text style={styles.dayEventName}>Young Adults Life Group</Text>
+                  <Text style={styles.dayEventTime}>6:30 PM</Text>
+                </View>
+              </View>
+            )}
+
+            {selectedDay === 'WED' && (
+              <>
+                <View style={styles.dayEventItem}>
+                  <Ionicons name="hand-left" size={20} color={COLORS.primary} />
+                  <View style={styles.dayEventInfo}>
+                    <Text style={styles.dayEventName}>Prayer Meeting</Text>
+                    <Text style={styles.dayEventTime}>5:30 PM</Text>
+                  </View>
+                </View>
+                <View style={styles.dayEventItem}>
+                  <Ionicons name="heart" size={20} color={COLORS.primary} />
+                  <View style={styles.dayEventInfo}>
+                    <Text style={styles.dayEventName}>Hope Harbour Recovery Group</Text>
+                    <Text style={styles.dayEventTime}>6:30 PM</Text>
+                  </View>
+                </View>
+              </>
+            )}
+
+            {selectedDay === 'THU' && (
+              <>
+                <View style={styles.dayEventItem}>
+                  <Ionicons name="book" size={20} color={COLORS.primary} />
+                  <View style={styles.dayEventInfo}>
+                    <Text style={styles.dayEventName}>Men's Life Group</Text>
+                    <Text style={styles.dayEventTime}>8:30 AM</Text>
+                  </View>
+                </View>
+                <View style={styles.dayEventItem}>
+                  <Ionicons name="color-palette" size={20} color={COLORS.primary} />
+                  <View style={styles.dayEventInfo}>
+                    <Text style={styles.dayEventName}>Ladies Craft Group</Text>
+                    <Text style={styles.dayEventTime}>10:30 AM</Text>
+                  </View>
+                </View>
+              </>
+            )}
+
+            {selectedDay === 'FRI' && (
+              <>
+                <View style={styles.dayEventItem}>
+                  <Ionicons name="book" size={20} color={COLORS.primary} />
+                  <View style={styles.dayEventInfo}>
+                    <Text style={styles.dayEventName}>Ladies Life Group</Text>
+                    <Text style={styles.dayEventTime}>9:00 AM</Text>
+                  </View>
+                </View>
+                <View style={styles.dayEventItem}>
+                  <Ionicons name="happy" size={20} color={COLORS.primary} />
+                  <View style={styles.dayEventInfo}>
+                    <Text style={styles.dayEventName}>Youth Group</Text>
+                    <Text style={styles.dayEventTime}>6:30 PM - 8:00 PM</Text>
+                  </View>
+                </View>
+              </>
+            )}
+
+            {selectedDay === 'SAT' && (
+              <View style={styles.noEventsContainer}>
+                <Ionicons name="calendar-outline" size={32} color={COLORS.textSecondary} />
+                <Text style={styles.noEventsText}>No scheduled events</Text>
+                <Text style={styles.noEventsSubtext}>Enjoy your rest day!</Text>
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
