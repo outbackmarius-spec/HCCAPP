@@ -540,6 +540,78 @@ export default function HomeScreen() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      {/* Connect Now Modal */}
+      <Modal visible={showConnectModal} animationType="slide" transparent>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Connect Now</Text>
+              <TouchableOpacity onPress={() => setShowConnectModal(false)}>
+                <Ionicons name="close" size={28} color={COLORS.text} />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.connectIntro}>
+              We'd love to help you find your place in our community! Fill out the form below and someone will reach out to help you get connected.
+            </Text>
+
+            <Text style={styles.inputLabel}>Your Name *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your full name"
+              placeholderTextColor={COLORS.textSecondary}
+              value={connectName}
+              onChangeText={setConnectName}
+            />
+
+            <Text style={styles.inputLabel}>Email *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your email"
+              placeholderTextColor={COLORS.textSecondary}
+              value={connectEmail}
+              onChangeText={setConnectEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <Text style={styles.inputLabel}>Phone *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your phone number"
+              placeholderTextColor={COLORS.textSecondary}
+              value={connectPhone}
+              onChangeText={setConnectPhone}
+              keyboardType="phone-pad"
+            />
+
+            <Text style={styles.inputLabel}>I'm interested in...</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g., Joining a Life Group, Youth Group, etc."
+              placeholderTextColor={COLORS.textSecondary}
+              value={connectInterest}
+              onChangeText={setConnectInterest}
+            />
+
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleConnect}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color={COLORS.background} />
+              ) : (
+                <Text style={styles.submitButtonText}>Connect Me</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 }
