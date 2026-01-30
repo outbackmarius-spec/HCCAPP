@@ -210,6 +210,17 @@ export default function HomeScreen() {
             <Text style={styles.actionTitle}>Questions?</Text>
             <Text style={styles.actionSubtitle}>We're here to help</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionCard}
+            onPress={() => setShowConnectModal(true)}
+          >
+            <View style={[styles.actionIcon, { backgroundColor: '#4CAF5022' }]}>
+              <Ionicons name="people" size={28} color="#4CAF50" />
+            </View>
+            <Text style={styles.actionTitle}>Connect Now</Text>
+            <Text style={styles.actionSubtitle}>Join a Life Group</Text>
+          </TouchableOpacity>
         </View>
 
         {/* This Week */}
