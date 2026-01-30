@@ -38,6 +38,7 @@ export default function HomeScreen() {
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [checkedIn, setCheckedIn] = useState(false);
+  const [selectedDay, setSelectedDay] = useState('SUN');
   
   // Check-in form state
   const [checkinName, setCheckinName] = useState('');
