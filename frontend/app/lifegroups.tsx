@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
+  ScrollView,
   TouchableOpacity,
   Modal,
   TextInput,
@@ -11,6 +11,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -39,12 +40,47 @@ interface LifeGroup {
   current_members: number;
 }
 
-export default function LifeGroupsScreen() {
+interface Ministry {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+}
+
+const MINISTRIES: Ministry[] = [
+  {
+    id: '1',
+    name: 'Meals Ministry',
+    description: 'Providing meals to those in need within our community. We prepare and deliver meals to families going through difficult times.',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_church-checkin-7/artifacts/d1hia1rh_Meals%20Ministry.avif',
+  },
+  {
+    id: '2',
+    name: 'HUB Singers',
+    description: 'Our choir ministry bringing worship through song. Join us as we lift our voices together in praise and worship.',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_church-checkin-7/artifacts/botpde0d_Hub%20Singers.avif',
+  },
+  {
+    id: '3',
+    name: 'Music Team',
+    description: 'Leading worship through music and song. If you play an instrument or love to sing, this is your place to serve.',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_church-checkin-7/artifacts/cuyuhqys_Music%20Team.avif',
+  },
+  {
+    id: '4',
+    name: 'Hospitality Team',
+    description: 'Creating a welcoming environment for all who visit. From greeting at the door to serving coffee, we make everyone feel at home.',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_church-checkin-7/artifacts/d32bzahf_Hospitality%20Team.avif',
+  },
+];
+
+export default function ResourcesScreen() {
   const [groups, setGroups] = useState<LifeGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<LifeGroup | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<'ministries' | 'lifegroups'>('ministries');
 
   // Signup form state
   const [signupName, setSignupName] = useState('');
@@ -99,7 +135,6 @@ export default function LifeGroupsScreen() {
         `You've signed up for ${selectedGroup.name}. The group leader will contact you soon!`
       );
 
-      // Refresh groups to update member count
       fetchGroups();
     } catch (error) {
       console.error('Signup error:', error);
@@ -117,12 +152,26 @@ export default function LifeGroupsScreen() {
     return 'book';
   };
 
-  const renderGroup = ({ item }: { item: LifeGroup }) => {
+  const renderMinistry = (ministry: Ministry) => (
+    <View key={ministry.id} style={styles.ministryCard}>
+      <Image
+        source={{ uri: ministry.imageUrl }}
+        style={styles.ministryImage}
+        resizeMode="cover"
+      />
+      <View style={styles.ministryContent}>
+        <Text style={styles.ministryName}>{ministry.name}</Text>
+        <Text style={styles.ministryDescription}>{ministry.description}</Text>
+      </View>
+    </View>
+  );
+
+  const renderGroup = (item: LifeGroup) => {
     const spotsLeft = item.max_members - item.current_members;
     const isFull = spotsLeft <= 0;
 
     return (
-      <View style={styles.groupCard}>
+      <View key={item.id} style={styles.groupCard}>
         <View style={styles.groupHeader}>
           <View style={styles.groupIconContainer}>
             <Ionicons name={getGroupIcon(item.name) as any} size={28} color={COLORS.primary} />
@@ -177,7 +226,7 @@ export default function LifeGroupsScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Loading Life Groups...</Text>
+          <Text style={styles.loadingText}>Loading Resources...</Text>
         </View>
       </SafeAreaView>
     );
@@ -187,22 +236,56 @@ export default function LifeGroupsScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Resources</Text>
-        <Text style={styles.headerSubtitle}>Life Group Studies & More</Text>
+        <Text style={styles.headerSubtitle}>Ministries & Life Groups</Text>
       </View>
 
-      <FlatList
-        data={groups}
-        renderItem={renderGroup}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="people" size={64} color={COLORS.textSecondary} />
-            <Text style={styles.emptyText}>No Life Groups available</Text>
-          </View>
-        }
-      />
+      {/* Tab Selector */}
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'ministries' && styles.tabActive]}
+          onPress={() => setActiveTab('ministries')}
+        >
+          <Ionicons 
+            name="heart" 
+            size={20} 
+            color={activeTab === 'ministries' ? COLORS.background : COLORS.textSecondary} 
+          />
+          <Text style={[styles.tabText, activeTab === 'ministries' && styles.tabTextActive]}>
+            Ministries
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'lifegroups' && styles.tabActive]}
+          onPress={() => setActiveTab('lifegroups')}
+        >
+          <Ionicons 
+            name="people" 
+            size={20} 
+            color={activeTab === 'lifegroups' ? COLORS.background : COLORS.textSecondary} 
+          />
+          <Text style={[styles.tabText, activeTab === 'lifegroups' && styles.tabTextActive]}>
+            Life Groups
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        {activeTab === 'ministries' ? (
+          <>
+            <Text style={styles.sectionIntro}>
+              Discover ways to serve and get involved in our church community.
+            </Text>
+            {MINISTRIES.map(renderMinistry)}
+          </>
+        ) : (
+          <>
+            <Text style={styles.sectionIntro}>
+              Join a Life Group and grow together in faith and community.
+            </Text>
+            {groups.map(renderGroup)}
+          </>
+        )}
+      </ScrollView>
 
       {/* Signup Modal */}
       <Modal visible={showSignupModal} animationType="slide" transparent>
@@ -303,9 +386,71 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     marginTop: 4,
   },
-  listContent: {
+  tabContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 16,
+    marginVertical: 12,
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
+    padding: 4,
+  },
+  tab: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 10,
+    gap: 8,
+  },
+  tabActive: {
+    backgroundColor: COLORS.primary,
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+  },
+  tabTextActive: {
+    color: COLORS.background,
+  },
+  scrollContent: {
+    padding: 16,
+    paddingTop: 8,
+  },
+  sectionIntro: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  // Ministry Styles
+  ministryCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  ministryImage: {
+    width: '100%',
+    height: 180,
+    backgroundColor: COLORS.card,
+  },
+  ministryContent: {
     padding: 16,
   },
+  ministryName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginBottom: 8,
+  },
+  ministryDescription: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    lineHeight: 20,
+  },
+  // Life Group Styles
   groupCard: {
     backgroundColor: COLORS.surface,
     borderRadius: 16,
@@ -396,17 +541,6 @@ const styles = StyleSheet.create({
   },
   joinButtonTextDisabled: {
     color: COLORS.textSecondary,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 64,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
-    marginTop: 16,
   },
   // Modal Styles
   modalOverlay: {
