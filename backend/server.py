@@ -303,6 +303,18 @@ async def signup_life_group(input: LifeGroupSignupCreate):
     
     return signup_obj
 
+# Connect Request Routes
+@api_router.post("/life-groups/connect", response_model=ConnectRequest)
+async def create_connect_request(input: ConnectRequestCreate):
+    connect_obj = ConnectRequest(**input.dict())
+    await db.connect_requests.insert_one(connect_obj.dict())
+    return connect_obj
+
+@api_router.get("/life-groups/connect", response_model=List[ConnectRequest])
+async def get_connect_requests():
+    requests = await db.connect_requests.find().sort("timestamp", -1).to_list(100)
+    return [ConnectRequest(**r) for r in requests]
+
 # Sermon Routes
 @api_router.get("/sermons", response_model=List[Sermon])
 async def get_sermons():
