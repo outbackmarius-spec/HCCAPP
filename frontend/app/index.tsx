@@ -823,6 +823,68 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     marginBottom: 16,
   },
+  dayTabsContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 16,
+  },
+  dayTab: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: COLORS.card,
+  },
+  dayTabActive: {
+    backgroundColor: COLORS.primary,
+  },
+  dayTabText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+  },
+  dayTabTextActive: {
+    color: COLORS.background,
+  },
+  dayEventsContainer: {
+    minHeight: 80,
+  },
+  dayEventItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.card,
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 10,
+  },
+  dayEventInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  dayEventName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
+  dayEventTime: {
+    fontSize: 13,
+    color: COLORS.primary,
+    marginTop: 2,
+  },
+  noEventsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+  },
+  noEventsText: {
+    fontSize: 15,
+    color: COLORS.textSecondary,
+    marginTop: 8,
+  },
+  noEventsSubtext: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    marginTop: 4,
+  },
   eventItem: {
     flexDirection: 'row',
     alignItems: 'center',
