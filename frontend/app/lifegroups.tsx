@@ -11,7 +11,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,33 +43,33 @@ interface Ministry {
   id: string;
   name: string;
   description: string;
-  imageUrl: string;
+  icon: string;
 }
 
 const MINISTRIES: Ministry[] = [
   {
     id: '1',
     name: 'Meals Ministry',
-    description: 'Providing meals to those in need within our community. We prepare and deliver meals to families going through difficult times.',
-    imageUrl: 'https://customer-assets.emergentagent.com/job_church-checkin-7/artifacts/d1hia1rh_Meals%20Ministry.avif',
+    description: 'Providing meals to those in need within our community. We prepare and deliver meals to families going through difficult times, new parents, or those recovering from illness.',
+    icon: 'restaurant',
   },
   {
     id: '2',
     name: 'HUB Singers',
-    description: 'Our choir ministry bringing worship through song. Join us as we lift our voices together in praise and worship.',
-    imageUrl: 'https://customer-assets.emergentagent.com/job_church-checkin-7/artifacts/botpde0d_Hub%20Singers.avif',
+    description: 'Our choir ministry bringing worship through song. Join us as we lift our voices together in praise and worship every Monday at 5:30pm.',
+    icon: 'mic',
   },
   {
     id: '3',
     name: 'Music Team',
-    description: 'Leading worship through music and song. If you play an instrument or love to sing, this is your place to serve.',
-    imageUrl: 'https://customer-assets.emergentagent.com/job_church-checkin-7/artifacts/cuyuhqys_Music%20Team.avif',
+    description: 'Leading worship through music and song. If you play an instrument or love to sing, this is your place to serve and use your musical gifts for God\'s glory.',
+    icon: 'musical-notes',
   },
   {
     id: '4',
     name: 'Hospitality Team',
-    description: 'Creating a welcoming environment for all who visit. From greeting at the door to serving coffee, we make everyone feel at home.',
-    imageUrl: 'https://customer-assets.emergentagent.com/job_church-checkin-7/artifacts/d32bzahf_Hospitality%20Team.avif',
+    description: 'Creating a welcoming environment for all who visit. From greeting at the door to serving coffee, we make everyone feel at home and loved.',
+    icon: 'cafe',
   },
 ];
 
@@ -78,7 +77,10 @@ export default function ResourcesScreen() {
   const [groups, setGroups] = useState<LifeGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const [showMinistryModal, setShowMinistryModal] = useState(false);
+  const [showMinistryConnectModal, setShowMinistryConnectModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<LifeGroup | null>(null);
+  const [selectedMinistry, setSelectedMinistry] = useState<Ministry | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<'ministries' | 'lifegroups'>('ministries');
 
@@ -105,6 +107,16 @@ export default function ResourcesScreen() {
   const openSignup = (group: LifeGroup) => {
     setSelectedGroup(group);
     setShowSignupModal(true);
+  };
+
+  const openMinistryDetails = (ministry: Ministry) => {
+    setSelectedMinistry(ministry);
+    setShowMinistryModal(true);
+  };
+
+  const openMinistryConnect = () => {
+    setShowMinistryModal(false);
+    setShowMinistryConnectModal(true);
   };
 
   const handleSignup = async () => {
@@ -144,6 +156,41 @@ export default function ResourcesScreen() {
     }
   };
 
+  const handleMinistryConnect = async () => {
+    if (!signupName.trim() || !signupEmail.trim() || !signupPhone.trim()) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (!selectedMinistry) return;
+
+    setIsSubmitting(true);
+    try {
+      await axios.post(`${API_URL}/api/life-groups/connect`, {
+        name: signupName,
+        email: signupEmail,
+        phone: signupPhone,
+        interest: selectedMinistry.name,
+      });
+
+      setShowMinistryConnectModal(false);
+      setSignupName('');
+      setSignupEmail('');
+      setSignupPhone('');
+      setSelectedMinistry(null);
+
+      Alert.alert(
+        'Thank You!',
+        `We've received your interest in ${selectedMinistry.name}. Someone will reach out to you soon!`
+      );
+    } catch (error) {
+      console.error('Ministry connect error:', error);
+      Alert.alert('Error', 'Failed to submit. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const getGroupIcon = (name: string) => {
     if (name.toLowerCase().includes('women')) return 'woman';
     if (name.toLowerCase().includes('men')) return 'man';
@@ -153,17 +200,22 @@ export default function ResourcesScreen() {
   };
 
   const renderMinistry = (ministry: Ministry) => (
-    <View key={ministry.id} style={styles.ministryCard}>
-      <Image
-        source={{ uri: ministry.imageUrl }}
-        style={styles.ministryImage}
-        resizeMode="cover"
-      />
-      <View style={styles.ministryContent}>
-        <Text style={styles.ministryName}>{ministry.name}</Text>
-        <Text style={styles.ministryDescription}>{ministry.description}</Text>
+    <TouchableOpacity 
+      key={ministry.id} 
+      style={styles.ministryCard}
+      onPress={() => openMinistryDetails(ministry)}
+    >
+      <View style={styles.ministryIconContainer}>
+        <Ionicons name={ministry.icon as any} size={24} color={COLORS.primary} />
       </View>
-    </View>
+      <Text style={styles.ministryName}>{ministry.name}</Text>
+      <TouchableOpacity 
+        style={styles.moreButton}
+        onPress={() => openMinistryDetails(ministry)}
+      >
+        <Text style={styles.moreButtonText}>...more</Text>
+      </TouchableOpacity>
+    </TouchableOpacity>
   );
 
   const renderGroup = (item: LifeGroup) => {
@@ -287,7 +339,102 @@ export default function ResourcesScreen() {
         )}
       </ScrollView>
 
-      {/* Signup Modal */}
+      {/* Ministry Details Modal */}
+      <Modal visible={showMinistryModal} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{selectedMinistry?.name}</Text>
+              <TouchableOpacity onPress={() => setShowMinistryModal(false)}>
+                <Ionicons name="close" size={28} color={COLORS.text} />
+              </TouchableOpacity>
+            </View>
+
+            {selectedMinistry && (
+              <>
+                <View style={styles.ministryDetailIcon}>
+                  <Ionicons name={selectedMinistry.icon as any} size={48} color={COLORS.primary} />
+                </View>
+                <Text style={styles.ministryDetailDescription}>
+                  {selectedMinistry.description}
+                </Text>
+                <TouchableOpacity
+                  style={styles.connectButton}
+                  onPress={openMinistryConnect}
+                >
+                  <Ionicons name="hand-right" size={20} color={COLORS.background} />
+                  <Text style={styles.connectButtonText}>Join Ministry</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Ministry Connect Modal */}
+      <Modal visible={showMinistryConnectModal} animationType="slide" transparent>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Join {selectedMinistry?.name}</Text>
+              <TouchableOpacity onPress={() => setShowMinistryConnectModal(false)}>
+                <Ionicons name="close" size={28} color={COLORS.text} />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.connectIntro}>
+              Fill out the form below and someone will reach out to help you get connected to this ministry.
+            </Text>
+
+            <Text style={styles.inputLabel}>Your Name *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your full name"
+              placeholderTextColor={COLORS.textSecondary}
+              value={signupName}
+              onChangeText={setSignupName}
+            />
+
+            <Text style={styles.inputLabel}>Email *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your email"
+              placeholderTextColor={COLORS.textSecondary}
+              value={signupEmail}
+              onChangeText={setSignupEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <Text style={styles.inputLabel}>Phone *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your phone number"
+              placeholderTextColor={COLORS.textSecondary}
+              value={signupPhone}
+              onChangeText={setSignupPhone}
+              keyboardType="phone-pad"
+            />
+
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleMinistryConnect}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <ActivityIndicator color={COLORS.background} />
+              ) : (
+                <Text style={styles.submitButtonText}>Connect Me</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Life Group Signup Modal */}
       <Modal visible={showSignupModal} animationType="slide" transparent>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -426,29 +573,74 @@ const styles = StyleSheet.create({
   },
   // Ministry Styles
   ministryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: COLORS.surface,
-    borderRadius: 16,
-    marginBottom: 16,
-    overflow: 'hidden',
-  },
-  ministryImage: {
-    width: '100%',
-    height: 180,
-    backgroundColor: COLORS.card,
-  },
-  ministryContent: {
+    borderRadius: 12,
     padding: 16,
+    marginBottom: 12,
+  },
+  ministryIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.primary + '22',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
   ministryName: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
     color: COLORS.text,
-    marginBottom: 8,
   },
-  ministryDescription: {
+  moreButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  moreButtonText: {
+    fontSize: 14,
+    color: COLORS.primary,
+    fontWeight: '500',
+  },
+  // Ministry Detail Modal
+  ministryDetailIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.primary + '22',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  ministryDetailDescription: {
+    fontSize: 16,
+    color: COLORS.textSecondary,
+    lineHeight: 24,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  connectButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    padding: 16,
+    gap: 8,
+  },
+  connectButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.background,
+  },
+  connectIntro: {
     fontSize: 14,
     color: COLORS.textSecondary,
     lineHeight: 20,
+    marginBottom: 20,
   },
   // Life Group Styles
   groupCard: {
@@ -559,7 +751,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   modalTitle: {
     fontSize: 22,
