@@ -718,12 +718,14 @@ const styles = StyleSheet.create({
   },
   actionsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     paddingHorizontal: 16,
     gap: 12,
     marginBottom: 24,
   },
   actionCard: {
-    flex: 1,
+    width: '30%',
+    flexGrow: 1,
     backgroundColor: COLORS.surface,
     padding: 16,
     borderRadius: 16,
