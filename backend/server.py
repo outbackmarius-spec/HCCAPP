@@ -144,6 +144,21 @@ class QuestionCreate(BaseModel):
     question: str
     is_anonymous: bool = False
 
+# Connect Request Models
+class ConnectRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: str
+    phone: str
+    interest: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class ConnectRequestCreate(BaseModel):
+    name: str
+    email: str
+    phone: str
+    interest: str = "Life Group"
+
 
 # ========== API ROUTES ==========
 
