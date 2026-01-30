@@ -865,6 +865,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: COLORS.text,
   },
+  connectIntro: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    lineHeight: 20,
+    marginBottom: 20,
+  },
   submitButton: {
     backgroundColor: COLORS.primary,
     borderRadius: 12,
